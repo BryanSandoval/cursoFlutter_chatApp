@@ -1,8 +1,11 @@
+import 'package:chatAppFlutter/helpers/mostrar_alerta.dart';
+import 'package:chatAppFlutter/services/auth_service.dart';
 import 'package:chatAppFlutter/widgets/custom_button.dart';
 import 'package:chatAppFlutter/widgets/custom_input.dart';
 import 'package:chatAppFlutter/widgets/label_widget.dart';
 import 'package:chatAppFlutter/widgets/logo_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key key}) : super(key: key);
@@ -49,6 +52,7 @@ class __FormState extends State<_Form> {
   final manejadorContra = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Container(
       margin: EdgeInsets.only(
         top: 40,
@@ -71,9 +75,22 @@ class __FormState extends State<_Form> {
           ),
           Custom_Button(
             colorAsignado: Colors.blue,
-            funcPresionar: () {
-              print("Hola Mundo");
-            },
+            funcPresionar: authService.autenticando
+                ? null
+                : () async {
+                    FocusScope.of(context).unfocus();
+                    final loginOk = await authService.login(
+                        manejadorCorreo.text.trim(),
+                        manejadorContra.text.trim());
+                    if (loginOk) {
+                      Navigator.pushReplacementNamed(context, "usuarios");
+                    } else {
+                      //Mostrar alerta
+                      mostrarAlerta(context, "Login Incorrecto",
+                          "Favor revise sus credenciales nuevamente.");
+                    }
+                    //AuthService().login(manejadorCorreo.text, manejadorContra.text)
+                  },
             textoBoton: "Ingresar",
           )
         ],
