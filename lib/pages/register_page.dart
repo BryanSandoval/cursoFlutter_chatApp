@@ -1,3 +1,4 @@
+import 'package:chatAppFlutter/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:chatAppFlutter/services/auth_service.dart';
@@ -54,6 +55,7 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final socketService = Provider.of<SocketService>(context);
     return Container(
       margin: EdgeInsets.only(
         top: 40,
@@ -91,6 +93,7 @@ class __FormState extends State<_Form> {
                         manejadorContra.text.trim());
                     if (registroOk == true) {
                       Navigator.pushReplacementNamed(context, "usuarios");
+                      socketService.connect();
                     } else {
                       //Mostrar alerta
                       mostrarAlerta(context, "Registro Incorrecto", registroOk);
